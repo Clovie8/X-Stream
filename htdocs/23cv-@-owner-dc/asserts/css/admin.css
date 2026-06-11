@@ -1,0 +1,1336 @@
+/* --- 1. FONTS & VARIABLES --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Brand Colors */
+    --primary: #e50914;
+    --primary-hover: #b20710;
+    --primary-light: rgba(229, 9, 20, 0.1);
+    
+    /* Neutral Colors */
+    --dark: #111827;       /* Deep blue-black */
+    --dark-secondary: #1f2937;
+    --light: #f3f4f6;
+    --white: #ffffff;
+    
+    /* Text Colors */
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    
+    /* Dimensions (Converted to REM mostly, referencing base 16px) */
+    --sidebar-width: 16.25rem; /* ~260px */
+    --header-height: 4rem;     /* ~64px (Reduced from 70px) */
+    
+    /* Effects */
+    --transition: all 0.2s ease-in-out;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    --radius: 0.75rem; /* 12px */
+}
+
+/* --- 2. GLOBAL RESETS --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--light);
+    color: var(--text-main);
+    line-height: 1.5;
+    font-size: 0.925rem; /* ~14.8px - Cleaner for dashboards */
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* --- 3. LAYOUT STRUCTURE --- */
+.admin-container {
+    display: block; /* We revert to block flow for stability with Fixed positioning */
+    min-height: 100vh;
+    overflow-x: hidden; /* Prevents the body from scrolling horizontally */
+}
+
+/* --- 4. SIDEBAR (Fixed & Full Height) --- */
+.admin-sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--dark);
+    color: var(--white);
+    
+    /* FIX: Force it to stay on the left */
+    position: fixed; 
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    z-index: 1000;
+    
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem; /* 24px */
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.sidebar-logo {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.toggle-sidebar-close {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    display: none;
+}
+
+.sidebar-menu {
+    padding: 1rem 0.75rem; /* Tightened padding */
+    overflow-y: auto;
+    flex: 1;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 0.65rem 1rem; /* Reduced vertical padding for smaller height */
+    color: #9ca3af;
+    text-decoration: none;
+    border-radius: 0.5rem; /* 8px */
+    margin-bottom: 0.25rem;
+    transition: var(--transition);
+    font-weight: 500;
+    font-size: 0.9rem; /* Slightly smaller text */
+}
+
+.menu-item:hover, .menu-item.active {
+    background-color: var(--primary);
+    color: var(--white);
+    transform: translateX(3px); /* Subtle shift */
+}
+
+.menu-item i {
+    width: 1.5rem;
+    margin-right: 0.75rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.menu-item .badge {
+    margin-left: auto;
+    background-color: rgba(255,255,255,0.15);
+    color: white;
+    padding: 0.15rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* --- 5. MAIN CONTENT AREA (Calculated Width) --- */
+.admin-main {
+    /* FIX: Push content to the right */
+    margin-left: var(--sidebar-width);
+    
+    /* FIX: Calculate exact remaining width. This prevents overflow. */
+    width: calc(100% - var(--sidebar-width));
+    max-width: calc(100% - var(--sidebar-width));
+    
+    background-color: var(--light);
+    min-height: 100vh;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* --- 6. TOP HEADER --- */
+.admin-header {
+    height: var(--header-height);
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-left h4{
+    font-size: 1.3rem;
+}
+
+.toggle-sidebar {
+    background: none;
+    border: none;
+    color: var(--text-main);
+    font-size: 1.25rem;
+    cursor: pointer;
+    margin-right: 1.25rem;
+    display: none;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 2rem;
+    transition: var(--transition);
+}
+
+.user-menu:hover {
+    background-color: #f1f5f9;
+}
+
+.user-menu span {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-right: 0.75rem;
+}
+
+.user-avatar {
+    width: 2.25rem; /* 36px */
+    height: 2.25rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), #ef4444);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(229, 9, 20, 0.3);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 65px;
+    right: 30px;
+    background-color: white;
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius);
+    padding: 0.5rem;
+    min-width: 12rem;
+    display: none;
+    border: 1px solid #f1f5f9;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 0.6rem 1rem;
+    color: var(--text-main);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.dropdown-item:hover {
+    background-color: #f8fafc;
+    color: var(--primary);
+}
+
+/* --- 7. CONTENT & CARDS --- */
+.admin-content {
+    padding: 0.9rem; /* 32px */
+    max-width: 100%;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.page-title {
+    font-size: 1.5rem; /* 24px - Reduced from 28px */
+    font-weight: 700;
+    color: var(--dark);
+    letter-spacing: -0.025em;
+}
+
+.card {
+    background-color: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    padding: 1rem 0.9rem;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.card-body {
+    padding: 0;
+    overflow: hidden;
+}
+
+/* --- 8. STATS WIDGETS (Refined) --- */
+/* --- 8. STATS WIDGETS (Refined & Compact) --- */
+.stats-grid {
+    display: grid;
+    /* Desktop: Fit as many as possible, min width 240px */
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+    gap: 1rem; /* 20px gap */
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 0.9rem 1.15rem; /* Reduced padding for a tighter look */
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--primary-light);
+}
+
+.stat-icon {
+    width: 2.75rem; /* 44px - Smaller and cleaner */
+    height: 2.75rem;
+    border-radius: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.1rem;
+    flex-shrink: 0; /* Prevents icon from squishing */
+}
+
+.stat-info {
+    flex: 1;
+    min-width: 0; /* Text truncation fix */
+}
+
+.stat-title {
+    color: var(--text-muted);
+    font-size: 0.75rem; /* Smaller label text */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stat-value {
+    font-size: 1rem; /* Reduced from 1.8rem */
+    font-weight: 700;
+    color: var(--dark);
+    line-height: 1.1;
+}
+
+/* --- 9. BUTTONS --- */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 2px 4px rgba(229, 9, 20, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    box-shadow: 0 4px 6px rgba(229, 9, 20, 0.25);
+}
+
+.btn-secondary {
+    background-color: white;
+    border: 1px solid #d1d5db;
+    color: var(--text-main);
+}
+
+.btn-secondary:hover {
+    background-color: #f8fafc;
+    border-color: #9ca3af;
+}
+
+/* --- 10. MODERN DATA TABLES --- */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table {
+    width: 100%;
+    white-space: nowrap;
+    margin-bottom: 0;
+    border-collapse: collapse;
+}
+
+.table th {
+    background-color: #f8fafc;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.table td {
+    padding: 1rem 1.25rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--text-main);
+    font-size: 0.9rem;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.table tr:hover {
+    background-color: #fcfcfc;
+}
+
+/* --- SCROLLABLE CELL (Description & Links) --- */
+.scroll-text {
+    max-width: 100px;       /* Adjust this width as needed */
+    overflow-x: auto;       /* Adds scrollbar if text is too long */
+    white-space: nowrap;    /* Forces text to stay on one line */
+    scrollbar-width: thin;  /* Firefox: makes scrollbar thinner */
+    padding-bottom: 4px;    /* Space for the scrollbar */
+    color: var(--text-main);
+}
+
+/* Stylized scrollbar for Chrome/Edge/Safari */
+.scroll-text::-webkit-scrollbar {
+    height: 4px;
+}
+.scroll-text::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+}
+.scroll-text::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 2px;
+}
+.scroll-text::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+.action-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.375rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--text-muted);
+    transition: var(--transition);
+    margin-right: 0.25rem;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.action-btn:hover {
+    background: #f1f5f9;
+    color: var(--primary);
+}
+
+/* --- 11. SEARCH & FILTERS --- */
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.filter-input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    background: #fff;
+    outline: none;
+    transition: var(--transition);
+}
+
+.filter-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+/* --- 12. PAGINATION --- */
+.pagination {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.page-link {
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: var(--text-main);
+    border-radius: 0.375rem;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.page-link:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.page-link.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* --- 13. DELETE MODAL --- */
+.container-delete {
+    /* 1. Make it cover the whole screen */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 2000; /* High z-index to sit on top of sidebar */
+    
+    /* 2. Visuals */
+    background: rgba(0, 0, 0, 0.5); /* Dimmed background */
+    backdrop-filter: blur(3px);      /* Glass effect */
+    
+    /* 3. The Centering Magic */
+    display: none; /* Hidden by default */
+    align-items: center;     /* Vertical center */
+    justify-content: center; /* Horizontal center */
+}
+
+/* When the 'show' class is added via JS, switch to Flex */
+.container-delete.show {
+    display: flex !important;
+}
+
+.main-delete {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    text-align: center;
+    
+    /* 4. CRITICAL FIX: Reset any old margins */
+    margin: 0 !important; 
+    position: relative;
+    
+    /* 5. Entrance Animation */
+    animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.main-delete p {
+    font-size: 1.125rem;
+    color: var(--dark);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.delete-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.delete-buttons button {
+    padding: 0.6rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: transform 0.1s;
+}
+
+.delete-buttons button:active {
+    transform: scale(0.96);
+}
+
+.delete-buttons .one {
+    background: #ef4444;
+    color: white;
+    border: none;
+}
+
+.delete-buttons .two {
+    background: white;
+    color: var(--text-main);
+    border: 1px solid #cbd5e1;
+}
+
+
+/* =====PAGINATION==== */
+/* --- HEADER ACTIONS --- */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* 16px */
+    flex-wrap: wrap;
+}
+
+/* --- SEARCH FORM --- */
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Modern Input Style */
+.search-box input {
+    padding: 0.6rem 1rem 0.6rem 2.5rem; /* Left padding for icon */
+    height: 2.5rem; /* 40px fixed height */
+    font-size: 0.9rem;
+    border: 1px solid #d1d5db;
+    background-color: var(--white);
+    color: var(--text-main);
+    border-radius: var(--radius) 0 0 var(--radius); /* Rounded left */
+    outline: none;
+    transition: var(--transition);
+    width: 100%;
+    min-width: 200px;
+}
+
+.search-box input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+    z-index: 5; /* Bring to front on focus */
+}
+
+/* Modern Search Button */
+.btn-search-submit {
+    height: 2.5rem; /* Match input height */
+    padding: 0 1.25rem;
+    background-color: var(--text-main); /* Dark grey for contrast */
+    border: 1px solid var(--text-main);
+    color: var(--white);
+    border-radius: 0 var(--radius) var(--radius) 0; /* Rounded right */
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-search-submit:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-search-submit i {
+    font-size: 0.9rem;
+}
+
+/* --- PAGINATION CONTAINER --- */
+.pagination-container {
+    padding: 1.5rem; /* Space around buttons */
+    border-top: 1px solid #f3f4f6; /* Separator line */
+    background-color: white;
+    
+    /* Centering Logic */
+    display: flex;
+    justify-content: center; /* This forces it to the center */
+    align-items: center;
+    
+    /* Ensure it sits nicely in the card */
+    border-bottom-left-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+}
+
+/* --- PAGINATION BUTTONS --- */
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap; /* Wraps nicely on very small screens */
+    justify-content: center;
+}
+
+.pagination a {
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-main);
+    background-color: var(--white);
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    transition: var(--transition);
+}
+
+.pagination a:hover:not(.active) {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+    color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.pagination a.active {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+    box-shadow: 0 4px 6px rgba(229, 9, 20, 0.2);
+}
+
+
+
+
+/* --- FORMS --- */
+#movieForm {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem; /* Reduced gap between groups */
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.85rem; /* Slightly smaller label */
+    letter-spacing: 0.01em;
+}
+
+.form-control {
+    width: 100%;
+    /* REDUCED PADDING: Makes input height smaller */
+    padding: 0.5rem 0.75rem; 
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    color: var(--text-main);
+    font-size: 0.9rem; /* Standard readable size */
+    transition: var(--transition);
+    outline: none;
+    height: 2.4rem; /* Fixed comfortable height */
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.form-control::placeholder {
+    color: #9ca3af;
+    font-size: 0.85rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1.25rem;
+}
+
+.form-col {
+    flex: 1;
+    min-width: 0;
+}
+
+/* --- MEDIA UPLOAD AREA --- */
+.media-upload {
+    border: 2px dashed #cbd5e1; /* Lighter dashed line */
+    background-color: #f8fafc;  /* Very light grey background */
+    border-radius: var(--radius); /* Consistent 12px radius */
+    padding: 2.5rem; /* 40px padding */
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.media-upload:hover {
+    border-color: var(--primary);
+    background-color: #fff; /* White on hover */
+    box-shadow: var(--shadow-sm); /* Subtle lift */
+}
+
+/* Styling for the icon inside the upload box (if you add one) */
+.media-upload i {
+    font-size: 2rem;
+    color: #94a3b8;
+    margin-bottom: 0.75rem;
+    transition: var(--transition);
+}
+
+.media-upload:hover i {
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.media-preview {
+    max-width: 100%;
+    max-height: 300px;
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+    display: none;
+    box-shadow: var(--shadow-md); /* Nice shadow for the image */
+    border: 1px solid #e2e8f0;
+    object-fit: contain; /* Ensures image isn't squashed */
+    background-color: white; /* Good for transparent PNGs */
+}
+
+
+
+/* --- Modern Filter Header Styles --- */
+
+/* The Container */
+.modern-header {
+    background: #fff;
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* The Title */
+.modern-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modern-title i {
+    color: var(--primary);
+    background: rgba(229, 9, 20, 0.1);
+    padding: 8px;
+    border-radius: 6px;
+}
+
+/* The Controls Area */
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Inputs (Date & Search) */
+.filter-input {
+    padding: 9px 12px;
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #444;
+    background-color: #fcfcfc;
+    transition: all 0.2s ease;
+    outline: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.filter-input:focus {
+    border-color: var(--primary);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.1); /* Soft Red Glow */
+}
+
+/* Specific Date Styling */
+input[type="date"].filter-input {
+    color: #666;
+    cursor: pointer;
+    min-width: 140px;
+}
+
+/* separator text 'to' */
+.filter-separator {
+    color: #999;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+/* Search Box Container */
+.search-wrap {
+    position: relative;
+    width: 240px;
+}
+
+.search-wrap i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.search-wrap input {
+    padding-left: 38px; /* Room for icon */
+    width: 100%;
+}
+
+/* --- Header Stats Badge --- */
+.header-stats {
+    background-color: #e3f2fd; /* Light Blue background */
+    color: #0d47a1; /* Dark Blue text */
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #bbdefb;
+    margin-right: auto; /* Pushes the filter form to the right */
+    margin-left: 15px;
+}
+
+.stats-label {
+    font-weight: 500;
+}
+
+.stats-value {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+a {
+    text-decoration-line: none;
+}
+
+/* Filter Button */
+.btn-filter {
+    background-color: var(--primary);
+    color: white;
+    font-weight: 500;
+    padding: 9px 20px;
+    box-shadow: 0 4px 6px rgba(229, 9, 20, 0.2);
+    border: none;
+}
+
+.btn-filter:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(229, 9, 20, 0.3);
+}
+
+
+/* Reset Button */
+.btn-reset {
+    background-color: transparent;
+    border: 1px solid #ddd;
+    color: #666;
+    font-weight: 500;
+    padding: 8px 16px;
+}
+
+.btn-reset:hover {
+    background-color: #f5f5f5;
+    color: #333;
+    border-color: #ccc;
+}
+
+
+
+/* --- Analytics Specific CSS --- */
+
+/* The Grid Container */
+.analytics-grid-row {
+    display: grid;
+    /* Force exactly 2 columns of equal width */
+    grid-template-columns: 1fr 1fr; 
+    gap: 25px; /* Space between the cards */
+    margin-bottom: 30px;
+}
+
+/* The Cards */
+.analytics-card {
+    height: 100%; /* Makes sure both cards in a row are same height */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Softer shadow */
+    border: 1px solid #eaeaea; /* Subtle border */
+    transition: transform 0.2s ease;
+}
+
+.analytics-card:hover {
+    transform: translateY(-2px); /* Tiny lift effect on hover */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.card-body {
+    flex: 1; /* Pushes content to fill height */
+}
+
+
+
+
+/* --- ALERT MESSAGES (Session Errors/Success) --- */
+.error_start, 
+.error_end {
+    position: relative; /* Critical for the X button positioning */
+    text-align: center;
+    font-weight: 500;
+    padding: 0.7rem 1.2rem; /* Extra padding on sides so text doesn't hit the X */
+    margin-left: 1rem;
+    margin-right: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Error State (Red) */
+.error_start {
+    background-color: #fef2f2;
+    border-color: #fee2e2;
+    color: #dc2626;
+}
+
+/* Success State (Green) */
+.error_end {
+    background-color: #f0fdf4;
+    border-color: #dcfce7;
+    color: #16a34a;
+}
+
+/* Icons before text */
+.error_start span::before { content: "⚠️ "; margin-right: 5px; }
+.error_end span::before { content: "✅ "; margin-right: 5px; }
+
+/* --- CLOSE BUTTON (X) --- */
+.close-alert {
+    position: absolute;
+    right: 15px; /* Stick to the right */
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    cursor: pointer;
+    font-size: 1rem;
+    opacity: 0.6;
+    padding: 5px; /* Increases clickable area */
+    transition: var(--transition);
+}
+
+.close-alert:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1); /* Slight zoom on hover */
+}
+
+
+/* --- SIMPLE FOOTER --- */
+.admin-footer {
+    margin-top: auto; /* Pushes footer to the bottom of flex container */
+    padding: 1rem 2rem;
+    border-top: 1px solid #e5e7eb;
+    background-color: var(--white);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the text */
+    gap: 0.5rem;
+}
+
+.admin-footer i {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.admin-footer strong {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+
+/* --- DASHBOARD TABLES GRID --- */
+.tables-grid {
+    display: grid;
+    /* Desktop: Create 2 equal columns */
+    grid-template-columns: 1fr 1fr; 
+    gap: 1.5rem; /* Space between the two cards */
+    margin-bottom: 2rem;
+}
+
+/* --- 14. ANIMATIONS --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(0.5rem); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* --- 15. RESPONSIVE MEDIA QUERIES --- */
+@media (max-width: 1024px) {
+    .analytics-grid-row {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 992px) {
+    /* 1. Hide Sidebar by default */
+    .admin-sidebar {
+        transform: translateX(-100%);
+        z-index: 2000; /* Higher than header */
+        box-shadow: none;
+    }
+    
+    /* 2. Show Sidebar when active */
+    .admin-sidebar.show {
+        transform: translateX(0);
+        box-shadow: 0 0 50px rgba(0,0,0,0.5); /* Strong shadow for visibility */
+    }
+    
+    /* 3. Reset Main Content to Full Width */
+    .admin-main {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .toggle-sidebar {
+        display: block;
+    }
+    
+    .toggle-sidebar-close {
+        display: block;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header-stats {
+        margin: 10px 0; /* Add space on smaller screens */
+        width: 100%;
+        justify-content: center;
+    }
+
+    .tables-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* --- RESPONSIVE MEDIA QUERIES --- */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns exactly */
+        gap: 0.75rem; /* Smaller gap */
+    }
+
+    .stat-card {
+        padding: 0.85rem; /* Very compact padding */
+        flex-direction: column; /* Optional: Stack icon and text if it's too tight */
+        align-items: flex-start; /* Align left */
+        text-align: left;
+    }
+
+    .stat-icon {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+        width: 2.25rem; /* Smaller icon on mobile */
+        height: 2.25rem;
+        font-size: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+    }
+    
+    .stat-title {
+        font-size: 0.7rem;
+    }
+
+    .form-row {
+        flex-direction: column; /* Stack inputs vertically on mobile */
+        gap: 1rem;
+    }
+
+    .modern-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-filter, .btn-reset {
+        width: 100%;
+        justify-content: center;
+        grid-column: span 1;
+    }
+
+    .analytics-grid-row {
+        grid-template-columns: 1fr; 
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-header {
+        padding: 0 1rem;
+    }
+    .admin-content {
+        padding: 0.8rem;
+    }
+    .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .filter-controls {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-box {
+        width: 100%;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .search-form, .search-box {
+        width: 100%;
+    }
+    
+    .search-box input {
+        width: 100%;
+        min-width: 0;
+    }
+    
+    .pagination {
+        justify-content: center;
+    }
+
+    .admin-footer {
+        padding: 1rem;
+        font-size: 0.75rem;
+        text-align: center;
+    }
+}

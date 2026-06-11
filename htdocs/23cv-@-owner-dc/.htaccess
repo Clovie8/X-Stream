@@ -1,0 +1,19 @@
+RewriteEngine On
+
+# Remove .php extension from URLs
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+
+AuthType Basic
+AuthName "Restricted Admin Area"
+AuthUserFile "/home/site/secure/.htpasswd"
+
+<RequireAll>
+    # Only allow from my public IP 
+    # Require 154.68.94.34
+
+    # Also require username + password
+    Require valid-user
+</RequireAll>

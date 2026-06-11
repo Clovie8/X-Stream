@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/f459ef06-b425-42a5-b403-a72a4cbeb80f/resourceGroups/TheOneMovies-RG/providers/Microsoft.Web/sites/theonemovies",
+    "appService.deploySubpath": "htdocs"
+}

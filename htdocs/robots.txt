@@ -1,0 +1,15 @@
+User-agent: *
+
+Disallow: /*?search=
+Disallow: /*&search=
+Disallow: /*?sort=
+Disallow: /*&sort=
+Disallow: /*?nocache=
+Disallow: /*?token=
+
+Disallow: /assets/
+
+Allow: /assets/image/
+
+# Sitemap Location
+Sitemap: https://theonemovies.com/sitemap.xml

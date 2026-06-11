@@ -1,0 +1,185 @@
+/* --- 1. FONTS & VARIABLES (Matching your Admin Panel) --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Brand Colors */
+    --primary: #e50914;
+    --primary-dark: #b20710;
+    --primary-light: rgba(229, 9, 20, 0.1);
+    
+    /* Neutral Colors */
+    --dark: #111827;
+    --light: #f3f4f6;
+    --gray: #9ca3af;
+    --white: #ffffff;
+    
+    /* Dimensions & Effects */
+    --radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* --- 2. GLOBAL RESETS --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif; /* Updated Font */
+}
+
+body {
+    background-color: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex; /* Centering Body Content */
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- 3. LAYOUT & CARD --- */
+.admin-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+.card {
+    background-color: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    /* Removed fixed margin-top to allow flex centering */
+    margin: 0; 
+    overflow: hidden;
+    width: 100%;
+    max-width: 400px; /* Slightly wider for modern feel */
+    border: 1px solid rgba(0,0,0,0.05);
+    animation: slideUp 0.4s ease-out;
+}
+
+.card-header {
+    background-color: var(--dark);
+    color: var(--primary);
+    padding: 1.5rem;
+    border-bottom: 1px solid #2d2d2d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.card-title {
+    font-weight: 700;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.card-body {
+    padding: 1.5rem; /* More breathing room */
+}
+
+/* --- 4. FORMS --- */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px; /* Softer corners */
+    transition: var(--transition);
+    font-size: 0.95rem;
+    height: 2.4rem;
+    background-color: #f9fafb;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px var(--primary-light); /* Modern Glow */
+    outline: none;
+}
+
+/* --- 5. BUTTONS --- */
+.btn {
+    padding: 0.5rem 1rem;
+    height: 2.4rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center; /* Center text */
+    gap: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    width: 100%; /* Full width for login forms usually looks better */
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    box-shadow: 0 4px 6px rgba(229, 9, 20, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(229, 9, 20, 0.3);
+}
+
+/* --- 6. ALERTS (Modernized) --- */
+.error_start, 
+.error_end {
+    text-align: center;
+    font-weight: 500;
+    padding: 0.6rem;
+    margin-bottom: 0.9rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Error State */
+.error_start {
+    background-color: #fef2f2;
+    border: 1px solid #fee2e2;
+    color: #dc2626;
+}
+.error_start span { color: #dc2626; }
+
+/* Success State */
+.error_end {
+    background-color: #f0fdf4;
+    border: 1px solid #dcfce7;
+    color: #16a34a;
+}
+.error_end span { color: #16a34a; }
+
+/* Animations */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

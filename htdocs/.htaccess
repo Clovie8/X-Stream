@@ -1,0 +1,78 @@
+# 1. Initialize Engine
+RewriteEngine On
+
+# --- START PWA FIX ---
+# If the browser asks for manifest.json or sw.js, serve it IMMEDIATELY and STOP processing other rules.
+RewriteRule ^manifest\.json$ - [L]
+RewriteRule ^sw\.js$ - [L]
+# --- END PWA FIX ---
+
+# 2. Security Headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Cache-Control "max-age=86400, public"
+    Header unset Expires
+    Header unset Pragma
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    RewriteCond %{HTTP_HOST} \.azurewebsites\.net$ [NC]
+    RewriteRule ^(.*)$ https://theonemovies.com/$1 [L,R=301]
+</IfModule>
+
+# 3. Force HTTPS (Must be at the top!)
+# RewriteCond %{HTTPS} !=on
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# -----------------------------------------------------------
+# 3.5. PWA CRITICAL FILES (PASTE THIS HERE)
+# Stop processing rules for these files and serve them directly.
+RewriteRule ^(manifest-v2\.json|sw\.js)$ - [L]
+# -----------------------------------------------------------
+
+# 4. Allow direct access to .txt files 
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule \.txt$ - [L]
+
+# 5. Cache Static Assets
+<FilesMatch "\.(css|js|jpg|jpeg|png|gif|svg|webp|ico)$">
+    Header set Cache-Control "max-age=31536000, public"
+</FilesMatch>
+
+# 6. Remove trailing slashes
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+# 7. Remove .php extension (Clean URLs)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^/]+)/?$ $1.php [L]
+
+# 8. Custom Routes (Movies/Series)
+RewriteRule ^play-movie/([^/]+)/([^/]+)/([^/]+)/?$ play-movie.php?playmoviekey=$1&withpmcat=$2&moviename=$3 [L,QSA]
+RewriteRule ^serie-details/([^/]+)/([^/]+)/([^/]+)/?$ serie-details.php?playseriekey=$1&withpscat=$2&seriename=$3 [L,QSA]
+RewriteRule ^play-serie/([^/]+)/([^/]+)/([^/]+)/?$ play-serie.php?playepisodekey=$1&withpecat=$2&episodename=$3 [L,QSA]
+
+# 9. Redirect old query parameters (Prevent direct PHP access)
+RewriteCond %{THE_REQUEST} /play-movie\.php\?playmoviekey=([^&]+)&withpmcat=([^\s&]+)&moviename=([^\s&]+) [NC]
+RewriteRule ^play-movie/%1/%2/%3? [R=301,L]
+
+# 10. Security & Protection
+Options -Indexes
+<FilesMatch "(^\.env|config\.php|composer\.json|package\.json|webpack\.config\.js)$">
+    Require all denied
+</FilesMatch>
+
+# 11. Error Documents
+ErrorDocument 400 /e/400
+ErrorDocument 401 /e/401
+ErrorDocument 403 /e/403
+ErrorDocument 404 /e/404
+ErrorDocument 500 /e/500
+ErrorDocument 503 /e/503
+
+# 12. PHP Settings
+php_value date.timezone Africa/Kigali
+php_value display_errors Off
